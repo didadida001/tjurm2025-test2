@@ -15,5 +15,16 @@ cv::Mat my_resize(const cv::Mat& input, float scale) {
      */
     int new_rows = input.rows * scale, new_cols = input.cols * scale;
     // IMPLEMENT YOUR CODE HERE
-    return cv::Mat::zeros(new_rows, new_cols, input.type());
+ 
+    cv::Mat resized(new_rows, new_cols, input.type());
+
+    for (int i = 0; i < new_rows; ++i) {
+        for (int j = 0; j < new_cols; ++j) {
+            int src_x = static_cast<int>(j / scale);
+            int src_y = static_cast<int>(i / scale);
+            resized.at<cv::Vec3b>(i, j) = input.at<cv::Vec3b>(src_y, src_x);  
+        }
+    }
+
+    return resized;
 }

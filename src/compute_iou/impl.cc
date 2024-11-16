@@ -1,6 +1,11 @@
 #include "impls.h"
 #include <algorithm>
-
+int max(int a, int b) {
+    return a > b ? a : b;
+}
+int min(int a, int b) {
+    return a < b ? a : b;
+}
 float compute_iou(const cv::Rect& a, const cv::Rect& b) {
     /**
      * 要求：
@@ -17,5 +22,16 @@ float compute_iou(const cv::Rect& a, const cv::Rect& b) {
      * 运行测试点，显示通过就行，不通过会告诉你哪一组矩形错了。
     */
     // IMPLEMENT YOUR CODE HERE
-    return 0.f;
-}
+    int x_left = max(a.x, b.x);
+    int y_top = max(a.y, b.y);
+    int x_right = min(a.x + a.width, b.x + b.width);
+    int y_bottom = min(a.y + a.height, b.y + b.height);
+
+    int intersection_area = max(0, x_right - x_left) * max(0, y_bottom - y_top);
+    int areaA = a.width * a.height;
+    int areaB = b.width * b.height;
+    int union_area = areaA + areaB - intersection_area;
+    if (union_area == 0) return 0;
+    double iou = static_cast<double>(intersection_area) / union_area;
+    return iou;
+    }

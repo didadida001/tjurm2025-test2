@@ -30,6 +30,30 @@ std::unordered_map<int, cv::Rect> roi_color(const cv::Mat& input) {
      */
     std::unordered_map<int, cv::Rect> res;
     // IMPLEMENT YOUR CODE HERE
+    cv::Mat gray;
+    cv::cvtColor(input, gray, cv::COLOR_BGR2GRAY);
 
+    cv::Mat binary;
+    cv::threshold(gray, binary, 0, 255, cv::THRESH_BINARY_INV + cv::THRESH_OTSU);
+
+    std::vector<std::vector<cv::Point>> contours;
+    std::vector<cv::Vec4i> hierarchy;
+    cv::findContours(binary, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
+
+    for (size_t i = 0; i < contours.size(); i++)
+     {
+        cv::Rect rect = cv::boundingRect(contours[i]);
+        cv::Mat roi = input(rect);
+        cv::Scalar mean_color = cv::mean(roi);
+
+        int color = 0; 
+        if (mean_color[1] > mean_color[0] && mean_color[1] > mean_color[2]) {
+            color = 1; 
+        } else if (mean_color[2] > mean_color[0] && mean_color[2] > mean_color[1]) {
+            color = 2; 
+        }
+
+        res[color] = rect;
+    }
     return res;
 }
